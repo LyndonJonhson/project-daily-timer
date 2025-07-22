@@ -30,7 +30,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid TaskDTO dto, HttpServletRequest request) {
+    public ResponseEntity<Task> create(@RequestBody @Valid TaskDTO dto, HttpServletRequest request) {
         var user = tokenService.getUser(request);
 
         var newTask = Task.builder()
@@ -39,9 +39,9 @@ public class TaskController {
                 .user(user)
                 .build();
 
-        taskRepository.save(newTask);
+        var task = taskRepository.save(newTask);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(task);
     }
 
     @GetMapping
@@ -50,8 +50,13 @@ public class TaskController {
             HttpServletRequest request
     ) {
         var user = tokenService.getUser(request);
-        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         return ResponseEntity.ok(taskRepository.findAllByUserId(user.getId(), pageable));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Task> find(@PathVariable Long id) {
+        var task = taskRepository.findById(id);
+        return task.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @PutMapping("/{id}")
