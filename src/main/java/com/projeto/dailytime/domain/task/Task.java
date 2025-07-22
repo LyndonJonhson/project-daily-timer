@@ -1,5 +1,6 @@
 package com.projeto.dailytime.domain.task;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.projeto.dailytime.domain.activity.Activity;
 import com.projeto.dailytime.domain.user.User;
 import jakarta.persistence.*;
@@ -29,6 +30,7 @@ public class Task implements Serializable {
 
     private String description;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
