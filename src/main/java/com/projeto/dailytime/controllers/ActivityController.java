@@ -34,7 +34,7 @@ public class ActivityController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid ActivityDTO dto, HttpServletRequest request) {
+    public ResponseEntity<Activity> create(@RequestBody @Valid ActivityDTO dto, HttpServletRequest request) {
         var taskOpt = taskRepository.findById(dto.taskId());
         if (taskOpt.isEmpty()) return ResponseEntity.badRequest().build();
 
@@ -48,9 +48,9 @@ public class ActivityController {
                 .task(task)
                 .build();
 
-        activityRepository.save(newActivity);
+        var activity = activityRepository.save(newActivity);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(activity);
     }
 
     @GetMapping
